@@ -18,7 +18,7 @@
                 initialize: function(options) {
                     Backbone.Router.prototype.initialize.call(this);
                     _.bindAll(this, 'allThreads', 'showThread');
-                    this.courseId = options.courseId;
+                    this.rootUrl = options.rootUrl;
                     this.discussion = options.discussion;
                     this.course_settings = options.courseSettings;
                     this.discussionBoardView = options.discussionBoardView;
@@ -50,7 +50,7 @@
 
                     Backbone.history.start({
                         pushState: true,
-                        root: '/courses/' + this.courseId + '/discussion/forum/'
+                        root: this.rootUrl
                     });
                 },
 

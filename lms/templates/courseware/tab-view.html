@@ -1,17 +1,24 @@
 ## mako
 
+<%! main_css = "style-main-v2" %>
+
 <%page expression_filter="h"/>
 <%!
 from openedx.core.djangolib.markup import HTML
 %>
 
 <%inherit file="/main.html" />
-<%block name="bodyclass">view-in-course view-statictab ${course.css_class or ''}</%block>
 <%namespace name='static' file='/static_content.html'/>
 
+% if tab['body_class']:
+<%block name="bodyclass"><% tab['body_class'] %></%block>
+% endif
+
+% if tab['online_help_token']:
+<%def name="online_help_token()"><% return "${tab['online_help_token']}" %></%def>
+% endif
+
 <%block name="headextra">
-<%static:css group='style-course-vendor'/>
-<%static:css group='style-course'/>
 ${HTML(fragment.head_html())}
 </%block>
 <%block name="js_extra">
@@ -24,10 +31,6 @@ ${HTML(fragment.foot_html())}
 
 <%include file="/courseware/course_navigation.html" args="active_page=active_page" />
 
-<main id="main" aria-label="Content" tabindex="-1">
-    <section class="container">
-      <div class="static_tab_wrapper">
-        ${HTML(fragment.body_html())}
-      </div>
-    </section>
-</main>
+<%block name="content">
+    ${HTML(fragment.body_html())}
+</%block>

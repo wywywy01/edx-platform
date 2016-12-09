@@ -61,7 +61,7 @@
 
                 // Set up a router to manage the page's history
                 router = new DiscussionRouter({
-                    courseId: options.courseId,
+                    rootUrl: options.root_url,
                     discussion: discussion,
                     courseSettings: courseSettings,
                     discussionBoardView: discussionBoardView,
