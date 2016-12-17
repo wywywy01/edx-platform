@@ -194,15 +194,6 @@ TEST_DATA_SPLIT_MODULESTORE = functools.partial(
 )
 
 
-# class SuppressSignalsMixin(object):
-#
-#     SIGNALS_TO_SUPPRESS = []
-#
-#
-#     @classmethod
-#     def suppress_signals(cls):
-#         pass
-
 
 class ModuleStoreIsolationMixin(CacheIsolationMixin):
     """
@@ -351,7 +342,32 @@ class SharedModuleStoreTestCase(ModuleStoreIsolationMixin, CacheIsolationTestCas
         super(SharedModuleStoreTestCase, self).setUp()
 
 
-class ModuleStoreTestCase(ModuleStoreIsolationMixin, TestCase):
+class ToggleSignalsMixin(object):
+
+    # If there are signals you want to be allowed to fire for your particular
+    # test (e.g. because it's testing signal-triggered actions), you can specify
+    # them here, like:
+    #
+    #   from xmodule.modulestore.django import SignalHandler
+    #
+    #   class MyPublishTestCase(ToggleSignalsMixin):
+    #
+    #       ALLOW_SIGNALS = [SignalHandler.course_published]
+    ALLOW_SIGNALS = []
+
+    @classmethod
+    def mute_signals(cls):
+        for signal in SignalHandler.all_signals():
+            if signal not in ALLOW_SIGNALS:
+                signal.mute()
+
+    @classmethod
+    def unmute_signals(cls):
+        for signal in SignalHandler.all_signals():
+            signal.unmute()
+
+
+class ModuleStoreTestCase(ModuleStoreIsolationMixin, ToggleSignalsMixin, TestCase):
     """
     Subclass for any test case that uses a ModuleStore.
     Ensures that the ModuleStore is cleaned before/after each test.
@@ -394,18 +410,18 @@ class ModuleStoreTestCase(ModuleStoreIsolationMixin, TestCase):
     # Tell Django to clean out all databases, not just default
     multi_db = True
 
-    receivers_suppressed = []
+    # Override this in your subclass if you want some of the Signals in
+    # modulestore's SignalHandler to fire (e.g. "publish_course")
+    ALLOW_SIGNALS = []
 
     @classmethod
     def setUpClass(cls):
         super(ModuleStoreTestCase, cls).setUpClass()
-        for signal in SignalHandler.all_signals():
-            signal.mute()
+        cls.mute_signals()
 
     @classmethod
     def tearDownClass(cls):
-        for signal in SignalHandler.all_signals():
-            signal.unmute()
+        cls.unmute_signals()
         super(ModuleStoreTestCase, cls).tearDownClass()
 
     def setUp(self):
