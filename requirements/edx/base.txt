@@ -170,7 +170,10 @@ nose-exclude
 nose-ignore-docstring
 nose-randomly==1.2.0
 nosexcover==1.0.7
+<<<<<<< cdebc81d8bfeb88810ead6224827db456f34617a
 pa11ycrawler==1.5.8
+=======
+>>>>>>> force pa11ycrawler to run
 pep8==1.5.7
 PyContracts==1.7.1
 python-subunit==0.0.16
