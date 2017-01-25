@@ -398,7 +398,7 @@ class Pa11yCrawler(BokChoyTestSuite):
         url = "https://raw.githubusercontent.com/edx/pa11ycrawler-ignore/master/ignore.yaml"
         return [
             "scrapy",
-            "test",
+            "crawl",
             "edx",
             "-a",
             "port=8003",
