@@ -98,7 +98,7 @@ def get_test_course(options):
         print colorize("green", "--imports-dir specified, skipping fetch of test course")
         return
 
-    if options.get('skip-fetch'):
+    if options.get('skip_fetch'):
         print colorize("green", "--skip-fetch specified, skipping fetch of test course")
         return
 
