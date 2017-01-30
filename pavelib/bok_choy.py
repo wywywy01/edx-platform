@@ -9,6 +9,7 @@ from pavelib.utils.test.bokchoy_options import (
     PA11Y_HTML,
     PA11Y_COURSE_KEY,
     PA11Y_FETCH_COURSE,
+    PA11Y_SINGLE_URL
 )
 from pavelib.utils.envs import Env
 from pavelib.utils.test.utils import check_firefox_version
@@ -100,7 +101,7 @@ def perf_report_bokchoy(options, passthrough_options):
 
 @needs('pavelib.prereqs.install_prereqs', 'get_test_course', 'load_courses')
 @cmdopts(
-    BOKCHOY_OPTS + [PA11Y_HTML, PA11Y_COURSE_KEY, PA11Y_FETCH_COURSE],
+    BOKCHOY_OPTS + [PA11Y_SINGLE_URL, PA11Y_HTML, PA11Y_COURSE_KEY, PA11Y_FETCH_COURSE],
     share_with=['get_test_course', 'prepare_bokchoy_run', 'load_courses']
 )
 @PassthroughTask
@@ -123,6 +124,7 @@ def pa11ycrawler(options, passthrough_options):
         'should_fetch_course',
         not options.get('fasttest')
     )
+
     options.pa11ycrawler.course_key = getattr(options, 'course-key', "course-v1:edX+Test101+course")
     test_suite = Pa11yCrawler('pa11ycrawler', passthrough_options=passthrough_options, **options.pa11ycrawler)
     test_suite.run()
