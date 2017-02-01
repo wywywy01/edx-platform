@@ -351,6 +351,7 @@ class Pa11yCrawler(BokChoyTestSuite):
     def __init__(self, *args, **kwargs):
         super(Pa11yCrawler, self).__init__(*args, **kwargs)
         self.course_key = kwargs.get('course_key')
+        self.single_url = kwargs.get('single_url', False)
         self.ensure_scrapy_cfg()
 
     def ensure_scrapy_cfg(self):
@@ -397,16 +398,28 @@ class Pa11yCrawler(BokChoyTestSuite):
         """
         data_dir = os.path.join(self.report_dir, 'data')
         url = "https://raw.githubusercontent.com/edx/pa11ycrawler-ignore/master/ignore.yaml"
-        return [
-            "scrapy",
-            "crawl",
-            "edx",
-            "-a",
-            "port=8003",
-            "-a",
-            "course_key={key}".format(key=self.course_key),
-            "-a",
-            "pa11y_ignore_rules_url={url}".format(url=url),
-            "-a",
-            "data_dir={dir}".format(dir=data_dir)
-        ]
+        if self.single_url:
+            return [
+                "scrapy",
+                "parse",
+                "--spider=edx",
+                "-a",
+                "data_dir={dir}".format(dir=data_dir),
+                self.single_url,
+                "--nocolour",
+                "--pipelines"
+            ]
+        else:
+            return [
+                "scrapy",
+                "crawl",
+                "edx",
+                "-a",
+                "port=8003",
+                "-a",
+                "course_key={key}".format(key=self.course_key),
+                "-a",
+                "pa11y_ignore_rules_url={url}".format(url=url),
+                "-a",
+                "data_dir={dir}".format(dir=data_dir)
+            ]
