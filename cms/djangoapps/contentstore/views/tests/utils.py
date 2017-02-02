@@ -41,11 +41,12 @@ class StudioPageTestCase(CourseTestCase):
         resp_content = json.loads(resp.content)
         return resp_content['html']
 
-    def validate_preview_html(self, xblock, view_name, can_add=True):
+    def validate_preview_html(self, xblock, view_name, can_add=True, can_move=False):
         """
         Verify that the specified xblock's preview has the expected HTML elements.
         """
         html = self.get_preview_html(xblock, view_name)
+        self.validate_html_for_move_button(html, can_move=can_move)
         self.validate_html_for_add_buttons(html, can_add)
 
         # Verify drag handles always appear.
@@ -56,11 +57,20 @@ class StudioPageTestCase(CourseTestCase):
         expected_button_html = [
             '<button class="btn-default edit-button action-button">',
             '<button data-tooltip="Delete" class="btn-default delete-button action-button">',
-            '<button data-tooltip="Duplicate" class="btn-default duplicate-button action-button">',
-            '<button data-tooltip="Move" class="btn-default move-button action-button">'
+            '<button data-tooltip="Duplicate" class="btn-default duplicate-button action-button">'
         ]
         for button_html in expected_button_html:
             self.assertIn(button_html, html)
+
+    def validate_html_for_move_button(self, html, can_move=False):
+        """
+        Validate that the specified HTML has move action..
+        """
+        move_button_html = '<button data-tooltip="Move" class="btn-default move-button action-button">'
+        if can_move:
+            self.assertIn(move_button_html, html)
+        else:
+            self.assertNotIn(move_button_html, html)
 
     def validate_html_for_add_buttons(self, html, can_add=True):
         """

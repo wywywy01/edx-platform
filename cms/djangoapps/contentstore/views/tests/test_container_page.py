@@ -124,7 +124,7 @@ class ContainerPageTestCase(StudioPageTestCase):
         published_unit = self.store.publish(self.vertical.location, self.user.id)
         published_child_container = self.store.get_item(self.child_container.location)
         published_child_vertical = self.store.get_item(self.child_vertical.location)
-        self.validate_preview_html(published_unit, self.container_view)
+        self.validate_preview_html(published_unit, self.container_view, can_move=True)
         self.validate_preview_html(published_child_container, self.container_view)
         self.validate_preview_html(published_child_vertical, self.reorderable_child_view)
 
@@ -132,7 +132,7 @@ class ContainerPageTestCase(StudioPageTestCase):
         """
         Verify that a draft xblock's container preview returns the expected HTML.
         """
-        self.validate_preview_html(self.vertical, self.container_view)
+        self.validate_preview_html(self.vertical, self.container_view, can_move=True)
         self.validate_preview_html(self.child_container, self.container_view)
         self.validate_preview_html(self.child_vertical, self.reorderable_child_view)
 

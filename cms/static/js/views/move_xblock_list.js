@@ -26,14 +26,17 @@ function($, Backbone, _, gettext, HtmlUtils, StringUtils, XBlockUtils, MoveXBloc
             course: 'section',
             section: 'subsection',
             subsection: 'unit',
-            unit: 'component'
+            unit: 'component',
+            split_test: 'group',
+            group: 'component'
         },
 
         categoriesText: {
             section: gettext('Sections'),
             subsection: gettext('Subsections'),
             unit: gettext('Units'),
-            component: gettext('Components')
+            component: gettext('Components'),
+            group: gettext('Groups')
         },
 
         events: {
@@ -127,7 +130,7 @@ function($, Backbone, _, gettext, HtmlUtils, StringUtils, XBlockUtils, MoveXBloc
                 this.parentInfo.parent.get('category'),
                 this.visitedAncestors[this.visitedAncestors.length - 2]
             );
-            this.childrenInfo.category = this.categoryRelationMap[this.parentInfo.category];
+            this.childrenInfo.category = this.categoryRelationMap[this.parentInfo.category] || 'component';
         },
 
         /**
@@ -136,25 +139,14 @@ function($, Backbone, _, gettext, HtmlUtils, StringUtils, XBlockUtils, MoveXBloc
          * @returns {any} Integer or undefined
          */
         getCurrentLocationIndex: function() {
-            var category, ancestorXBlock, currentLocationIndex;
-
-            if (this.childrenInfo.category === 'component' || this.childrenInfo.children.length === 0) {
-                return currentLocationIndex;
-            }
-
-            category = this.childrenInfo.children[0].get('category');
-            ancestorXBlock = _.find(
-                this.ancestorInfo.ancestors, function(ancestor) { return ancestor.category === category; }
-            );
-
-            if (ancestorXBlock) {
-                _.each(this.childrenInfo.children, function(xblock, index) {
-                    if (ancestorXBlock.display_name === xblock.get('display_name') &&
-                        ancestorXBlock.id === xblock.get('id')) {
+            var self = this, currentLocationIndex;
+            _.each(self.childrenInfo.children, function(xblock, index) {
+                _.each(self.ancestorInfo.ancestors, function(ancestor) {
+                    if (ancestor.display_name === xblock.get('display_name') && ancestor.id === xblock.get('id')) {
                         currentLocationIndex = index;
                     }
                 });
-            }
+            });
 
             return currentLocationIndex;
         },
