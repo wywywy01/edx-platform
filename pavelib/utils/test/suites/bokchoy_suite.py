@@ -401,17 +401,20 @@ class Pa11yCrawler(BokChoyTestSuite):
         if self.single_url:
             return [
                 "scrapy",
-                "parse",
-                "--spider=edx",
+                "crawl",
+                "edx",
+                "-a",
+                "port=8003",
+                "-a",
+                "course_key={key}".format(key=self.course_key),
+                "-a",
+                "pa11y_ignore_rules_url={url}".format(url=url),
                 "-a",
                 "data_dir={dir}".format(dir=data_dir),
                 "-a",
-                "port=8003",
-                self.single_url,
-                "-c",
-                "parse_single_url",
-                "--nocolour",
-                "--pipelines"
+                "single_url={url}".format(url=self.single_url),
+                "-s",
+                "DEPTH_LIMIT=1"
             ]
         else:
             return [
