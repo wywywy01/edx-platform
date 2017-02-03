@@ -405,7 +405,11 @@ class Pa11yCrawler(BokChoyTestSuite):
                 "--spider=edx",
                 "-a",
                 "data_dir={dir}".format(dir=data_dir),
+                "-a",
+                "port=8003",
                 self.single_url,
+                "-c",
+                "parse_single_url",
                 "--nocolour",
                 "--pipelines"
             ]
