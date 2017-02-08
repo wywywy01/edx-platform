@@ -404,8 +404,6 @@ class Pa11yCrawler(BokChoyTestSuite):
                 "crawl",
                 "edx",
                 "-a",
-                "port=8003",
-                "-a",
                 "course_key={key}".format(key=self.course_key),
                 "-a",
                 "pa11y_ignore_rules_url={url}".format(url=url),
@@ -413,8 +411,6 @@ class Pa11yCrawler(BokChoyTestSuite):
                 "data_dir={dir}".format(dir=data_dir),
                 "-a",
                 "single_url={url}".format(url=self.single_url),
-                "-s",
-                "DEPTH_LIMIT=1"
             ]
         else:
             return [
