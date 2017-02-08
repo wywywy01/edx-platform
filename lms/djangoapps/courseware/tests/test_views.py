@@ -5,7 +5,9 @@ Tests courseware views.py
 
 from urllib import urlencode, quote
 import ddt
+import uuid
 import json
+import mock
 import itertools
 import unittest
 from datetime import datetime, timedelta
@@ -50,6 +52,7 @@ from lms.djangoapps.commerce.utils import EcommerceService  # pylint: disable=im
 from milestones.tests.utils import MilestonesTestCaseMixin
 from openedx.core.djangoapps.self_paced.models import SelfPacedConfiguration
 from openedx.core.lib.gating import api as gating_api
+from openedx.core.djangoapps.programs.tests import mock_data
 from openedx.core.djangoapps.crawlers.models import CrawlersConfig
 from student.models import CourseEnrollment
 from student.tests.factories import AdminFactory, UserFactory, CourseEnrollmentFactory
@@ -345,6 +348,21 @@ class ViewsTestCase(ModuleStoreTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, expected_response_code)
         return response
+
+    @patch.dict(settings.FEATURES, {'RESTRICT_ENROLL_BY_REG_METHOD': False})
+    def test_program_detail_view(self):
+        program_detail = "<div id='program-details-page'>"
+        url = reverse('program_marketing_view', kwargs={'program_uuid': str(uuid.uuid4())})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+
+        with mock.patch("courseware.views.views.get_programs") as patched_get_programs:
+            with mock.patch("courseware.views.views.ProgramDataExtender") as patched_program_data_extender_class:
+                patched_get_programs.return_value = mock_data.PROGRAM_DATA
+                patched_program_data_extender_class.extend.return_value = mock_data.PROGRAM_DATA
+                response = self.client.get(url)
+                self.assertEqual(response.status_code, 200)
+                self.assertNotIn(program_detail, response.content)
 
     def test_index_no_visible_section_in_chapter(self):
 

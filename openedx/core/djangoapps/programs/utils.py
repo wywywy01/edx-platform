@@ -14,6 +14,7 @@ from pytz import utc
 from course_modes.models import CourseMode
 from lms.djangoapps.certificates import api as certificate_api
 from lms.djangoapps.commerce.utils import EcommerceService
+from lms.djangoapps.courseware.access import has_access
 from openedx.core.djangoapps.catalog.utils import get_programs
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 from student.models import CourseEnrollment
@@ -333,6 +334,9 @@ class ProgramDataExtender(object):
                 run_mode['upgrade_url'] = None
         else:
             run_mode['upgrade_url'] = None
+
+    def _attach_course_run_can_enroll(self, run_mode):
+        run_mode['can_enroll'] = bool(has_access(self.user, 'enroll', self.course_overview))
 
     def _attach_instructors(self):
         """
