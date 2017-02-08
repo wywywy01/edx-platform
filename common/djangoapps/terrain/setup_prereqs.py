@@ -65,6 +65,7 @@ def start_stub_servers():
     for stub in SERVICES.keys():
         start_stub(stub)
 
+
 @before.each_scenario  # pylint: disable=no-member
 def skip_youtube_if_not_available(scenario):
     """
