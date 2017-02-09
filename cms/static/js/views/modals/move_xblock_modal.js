@@ -137,17 +137,17 @@ function($, Backbone, _, gettext, BaseView, XBlockViewUtils, MoveXBlockUtils, Ht
         },
         validCategoryCheck: function(targetParentType, sourceParentType) {
             if (!_.contains(['course, chapter, sequential, vertical'], sourceParentType)) {
-                sourceParentType = 'vertical';
+                sourceParentType = 'vertical';  // eslint-disable-line no-param-reassign
             }
             return targetParentType === sourceParentType;
         },
 
-    enableMoveOperation: function(targetParentXBlockInfo) {
-        var isValidMove = false,
-            sourceParentType = this.sourceParentXBlockInfo.get('category'),
-            targetParentType = targetParentXBlockInfo.get('category');
+        enableMoveOperation: function(targetParentXBlockInfo) {
+            var isValidMove = false,
+                sourceParentType = this.sourceParentXBlockInfo.get('category'),
+                targetParentType = targetParentXBlockInfo.get('category');
 
-        if (this.validCategoryCheck(targetParentType, sourceParentType)
+            if (this.validCategoryCheck(targetParentType, sourceParentType)
                 && this.sourceParentXBlockInfo.id !== targetParentXBlockInfo.id) {
                 isValidMove = true;
                 this.targetParentXBlockInfo = targetParentXBlockInfo;

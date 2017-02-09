@@ -41,17 +41,14 @@ class StudioPageTestCase(CourseTestCase):
         resp_content = json.loads(resp.content)
         return resp_content['html']
 
-    def validate_preview_html(self, xblock, view_name, can_add=True, can_move=False):
+    def validate_preview_html(self, xblock, view_name, can_add=True, can_reorder=True, can_move=True):
         """
         Verify that the specified xblock's preview has the expected HTML elements.
         """
         html = self.get_preview_html(xblock, view_name)
-        self.validate_html_for_move_button(html, can_move=can_move)
         self.validate_html_for_add_buttons(html, can_add)
-
-        # Verify drag handles always appear.
-        drag_handle_html = '<span data-tooltip="Drag to reorder" class="drag-handle action"></span>'
-        self.assertIn(drag_handle_html, html)
+        self.validate_html_for_reorder(html, can_reorder)
+        self.validate_html_for_move_button(html, can_move)
 
         # Verify that there are no action buttons for public blocks
         expected_button_html = [
@@ -62,7 +59,17 @@ class StudioPageTestCase(CourseTestCase):
         for button_html in expected_button_html:
             self.assertIn(button_html, html)
 
-    def validate_html_for_move_button(self, html, can_move=False):
+    def validate_html_for_reorder(self, html, can_reorder=True):
+        """
+        Validate that the specified HTML has reorder/drag and drop action..
+        """
+        drag_handle_html = '<span data-tooltip="Drag to reorder" class="drag-handle action"></span>'
+        if can_reorder:
+            self.assertIn(drag_handle_html, html)
+        else:
+            self.assertNotIn(drag_handle_html, html)
+
+    def validate_html_for_move_button(self, html, can_move=True):
         """
         Validate that the specified HTML has move action..
         """

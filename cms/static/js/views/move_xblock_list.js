@@ -139,7 +139,8 @@ function($, Backbone, _, gettext, HtmlUtils, StringUtils, XBlockUtils, MoveXBloc
          * @returns {any} Integer or undefined
          */
         getCurrentLocationIndex: function() {
-            var self = this, currentLocationIndex;
+            var self = this,
+                currentLocationIndex;
             _.each(self.childrenInfo.children, function(xblock, index) {
                 _.each(self.ancestorInfo.ancestors, function(ancestor) {
                     if (ancestor.display_name === xblock.get('display_name') && ancestor.id === xblock.get('id')) {
