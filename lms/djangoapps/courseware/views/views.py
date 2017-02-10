@@ -451,7 +451,7 @@ class CourseTabView(View):
         fragment = tab.render_fragment(request, course)
 
         response_format = request.GET.get('format') or request.POST.get('format') or 'html'
-        if response_format == 'json' or WEB_FRAGMENT_RESPONSE_TYPE in request.META.get('HTTP_ACCEPT'):
+        if response_format == 'json' or WEB_FRAGMENT_RESPONSE_TYPE in request.META.get('HTTP_ACCEPT', 'text/html'):
             return JsonResponse(fragment.to_dict())
         else:
             return render_to_response('courseware/tab-view.html', {
