@@ -6,10 +6,12 @@ from functools import wraps
 import logging
 from sets import Set
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.context_processors import csrf
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
+from django.contrib.staticfiles.storage import staticfiles_storage
 from django.http import Http404, HttpResponseBadRequest
 from django.shortcuts import render_to_response
 from django.template.loader import render_to_string
@@ -633,6 +635,8 @@ class DiscussionBoardFragmentView(EdxFragmentView):
 
         fragment = Fragment(html)
         self.add_resource_urls(fragment)
+        if not settings.REQUIRE_DEBUG:
+            fragment.add_javascript_url(staticfiles_storage.url('discussion/js/discussion_board_factory.js'))
         fragment.add_javascript(inline_js)
         return fragment
 

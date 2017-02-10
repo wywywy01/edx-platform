@@ -56,19 +56,3 @@ from openedx.core.djangolib.markup import HTML
 
 <%include file="_underscore_templates.html" />
 <%include file="_thread_list_template.html" />
-
-<%static:require_module module_name="discussion/js/discussion_board_factory" class_name="DiscussionBoardFactory">
-DiscussionBoardFactory({
-    courseId: '${unicode(course.id) | n, js_escaped_string}',
-    $el: $(".discussion-board"),
-    root_url: '${request.path}',
-    user_info: ${user_info | n, dump_js_escaped_json},
-    roles: ${roles | n, dump_js_escaped_json},
-    sort_preference: '${sort_preference | n, js_escaped_string}',
-    threads: ${threads | n, dump_js_escaped_json},
-    thread_pages: '${thread_pages | n, js_escaped_string}',
-    content_info: ${annotated_content_info | n, dump_js_escaped_json},
-    course_name: '${course.display_name_with_default | n, js_escaped_string}',
-    course_settings: ${course_settings | n, dump_js_escaped_json}
-});
-</%static:require_module>
