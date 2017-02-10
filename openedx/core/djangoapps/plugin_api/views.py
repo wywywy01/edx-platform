@@ -42,21 +42,21 @@ class EdxFragmentView(FragmentView):
             return settings.PIPELINE_JS[group]['source_filenames']
 
     @abstractmethod
-    def vendor_js_dependencies(self, request, *args, **kwargs):
+    def vendor_js_dependencies(self):
         """
         Returns list of the vendor JS files that this view depends on.
         """
         return []
 
     @abstractmethod
-    def js_dependencies(self, request, *args, **kwargs):
+    def js_dependencies(self):
         """
         Returns list of the JavaScript files that this view depends on.
         """
         return []
 
     @abstractmethod
-    def css_dependencies(self, request, *args, **kwargs):
+    def css_dependencies(self):
         """
         Returns list of the CSS files that this view depends on.
         """

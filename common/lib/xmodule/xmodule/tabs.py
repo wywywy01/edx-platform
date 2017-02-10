@@ -2,7 +2,6 @@
 Implement CourseTab
 """
 from abc import ABCMeta
-import json
 import logging
 
 from xblock.fields import List
@@ -286,8 +285,7 @@ class TabFragmentViewMixin(object):
         Renders the JSON representation of this tab's web fragment.
         """
         fragment = self.render_fragment(request, course)
-        json = fragment.to_dict()
-        return JsonResponse(json)
+        return JsonResponse(fragment.to_dict())
 
     def render_fragment(self, request, course):
         """
