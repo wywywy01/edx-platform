@@ -28,7 +28,7 @@ class BlockStructureCache(object):
 
     def add(self, block_structure):
         """
-        Store a compressed and pickl    ed serialization of the given
+        Store a compressed and pickled serialization of the given
         block structure into the given cache.
 
         The key in the cache is 'root.key.<root_block_usage_key>'.

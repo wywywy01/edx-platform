@@ -4,6 +4,8 @@ BlockStructures.
 """
 from contextlib import contextmanager
 
+from openedx.core.djangoapps.content.block_structure import config
+
 from .cache import BlockStructureCache
 from .factory import BlockStructureFactory
 from .exceptions import UsageKeyNotInBlockStructure, TransformerDataIncompatible, BlockStructureNotFound
@@ -77,17 +79,26 @@ class BlockStructureManager(object):
 
     def get_collected(self):
         """
+        Returns the collected Block Structure for the root_block_usage_key.
+
+        Returns:
+            BlockStructureBlockData - A collected block structure,
+                starting at root_block_usage_key, with collected data
+                from each registered transformer.
+        """
+        if config.is_enabled(config.STORAGE_BACKING_FOR_CACHE):
+            return self._get_or_update_collected_v2()
+        else:
+            return self._get_or_update_collected_v1()
+
+    def _get_or_update_collected_v1(self):
+        """
         Returns the collected Block Structure for the root_block_usage_key,
         getting block data from the cache and modulestore, as needed.
 
         Details: The cache is updated if needed (if outdated or empty),
         the modulestore is accessed if needed (at cache miss), and the
         transformers data is collected if needed.
-
-        Returns:
-            BlockStructureBlockData - A collected block structure,
-                starting at root_block_usage_key, with collected data
-                from each registered transformer.
         """
         try:
             block_structure = BlockStructureFactory.create_from_cache(
@@ -101,28 +112,86 @@ class BlockStructureManager(object):
 
         return block_structure
 
+    def _get_or_update_collected_v2(self):
+        """
+        """
+        # NAATODO
+        # try:
+        #     return self._get_collected_v2()
+        # except (DoesNotExist, OutdatedTransformerVersion):
+        #     if config.is_enabled(config.UPDATE_WHEN_NOT_FOUND):
+        #         return self.update_collected()
+        #     else:
+        #         raise
+
+    def _get_collected_v2(self):
+        """
+        """
+        # NAATODO
+        # structure_model = models.get_current(self.root_block_usage_key) # raises DoesNotExist
+        #
+        # found_in_cache = True
+        # block_structure = BlockStructureFactory.create_from_cache(
+        #     structure_model,
+        #     self.block_structure_cache
+        # )
+        # if not block_structure:
+        #     found_in_cache = False
+        #     block_structure = BlockStructureFactory.create_from_storage(structure_model)
+        #
+        # BlockStructureTransformers.verify_read_versions(block_structure)
+        # if not found_in_cache:
+        #     self.block_structure_cache.add(structure_model, block_structure)
+        # return block_structure
+
     def update_collected(self):
         """
         Updates the collected Block Structure for the root_block_usage_key.
-
-        Details: The cache is updated by collecting transformers data from
-        the modulestore.
         """
         with self._bulk_operations():
-            block_structure = BlockStructureFactory.create_from_modulestore(
-                self.root_block_usage_key,
-                self.modulestore,
-            )
-            BlockStructureTransformers.collect(block_structure)
-            self.block_structure_cache.add(block_structure)
-            return block_structure
+            if config.is_enabled(config.STORAGE_BACKING_FOR_CACHE):
+                return self._update_collected_v2()
+            else:
+                return self._update_collected_v1()
+
+    def _update_collected_v1(self):
+        """
+        The cache is updated by collecting transformers data from
+        the modulestore.
+        """
+        block_structure = BlockStructureFactory.create_from_modulestore(
+            self.root_block_usage_key,
+            self.modulestore,
+        )
+        BlockStructureTransformers.collect(block_structure)
+        self.block_structure_cache.add(block_structure)
+        return block_structure
+
+    def _update_collected_v2(self):
+        """
+        """
+        # NAATODO
+        # block_structure = BlockStructureFactory.create_from_modulestore(
+        #     self.root_block_usage_key,
+        #     self.modulestore,
+        # )
+        # BlockStructureTransformers.collect(block_structure)
+        #
+        # structure_model = models.add(block_structure)
+        # self.block_structure_cache.add(structure_model, block_structure)
+        # return block_structure
 
     def clear(self):
         """
-        Removes cached data for the block structure associated with the given
+        Removes data for the block structure associated with the given
         root block key.
         """
-        self.block_structure_cache.delete(self.root_block_usage_key)
+        if config.is_enabled(config.STORAGE_BACKING_FOR_CACHE):
+            # NAATODO
+            # models.delete(self.root_block_usage_key)
+            pass
+        else:
+            self.block_structure_cache.delete(self.root_block_usage_key)
 
     @contextmanager
     def _bulk_operations(self):
