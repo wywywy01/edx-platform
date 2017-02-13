@@ -11,15 +11,17 @@ class VersionIdentifier(object):
     """
     def __init__(self, **kwargs):
         self.root_usage_key = kwargs.get('root_usage_key')
-        self.data_version_guid = kwargs.get('data_version_guid')
-        self.data_time_stamp = kwargs.get('data_time_stamp')
-        self.block_structure_class_version = kwargs.get(
-            'block_structure_class_version',
-            BlockStructureBlockData.VERSION,
-        )
-        self.transformers_version_hash = kwargs.get(
-            'transformers_version_hash',
+
+        self.data_version = kwargs.get('data_version')
+        self.data_timestamp = kwargs.get('data_timestamp')
+
+        self.transformers_schema_version = kwargs.get(
+            'transformers_schema_version',
             TransformerRegistry.get_write_version_hash,
+        )
+        self.block_structure_schema_version = kwargs.get(
+            'block_structure_schema_version',
+            BlockStructureBlockData.VERSION,
         )
 
     def __unicode__(self):
