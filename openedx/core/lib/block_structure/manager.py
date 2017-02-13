@@ -118,7 +118,7 @@ class BlockStructureManager(object):
         # NAATODO
         # try:
         #     return self._get_collected_v2()
-        # except (DoesNotExist, OutdatedTransformerVersion):
+        # except (DoesNotExist, TransformerDataIncompatible):
         #     if config.is_enabled(config.UPDATE_WHEN_NOT_FOUND):
         #         return self.update_collected()
         #     else:
@@ -130,18 +130,18 @@ class BlockStructureManager(object):
         # NAATODO
         # structure_model = models.get_current(self.root_block_usage_key) # raises DoesNotExist
         #
-        # found_in_cache = True
-        # block_structure = BlockStructureFactory.create_from_cache(
-        #     structure_model,
-        #     self.block_structure_cache
-        # )
-        # if not block_structure:
-        #     found_in_cache = False
-        #     block_structure = BlockStructureFactory.create_from_storage(structure_model)
+        # try:
+        #     block_structure = BlockStructureFactory.create_from_cache(
+        #         structure_model,
+        #         self.block_structure_cache
+        #     )
+        #     BlockStructureTransformers.verify_versions(block_structure)
         #
-        # BlockStructureTransformers.verify_read_versions(block_structure)
-        # if not found_in_cache:
+        # except BlockStructureNotFound:
+        #     block_structure = BlockStructureFactory.create_from_storage(structure_model)
+        #     BlockStructureTransformers.verify_versions(block_structure)
         #     self.block_structure_cache.add(structure_model, block_structure)
+        #
         # return block_structure
 
     def update_collected(self):
