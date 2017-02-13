@@ -164,3 +164,40 @@ def get_programs_with_type_logo():
         program['logo_image'] = type_logo_map[program['type']]
 
     return programs_list
+
+
+def get_catalog_course_runs(course_keys):
+    """
+    Retrieve course runs from the catalog service.
+
+    Arguments:
+        course_keys ([CourseKey]): A list of Course key objects to identify the course runs whose data we want.
+
+    Returns:
+        list of dict with each record representing a course run.
+    """
+    catalog_integration = CatalogIntegration.current()
+    course_runs = []
+    if catalog_integration.enabled:
+        try:
+            user = User.objects.get(username=catalog_integration.service_username)
+        except User.DoesNotExist:
+            return course_runs
+
+        api = create_catalog_api_client(user, catalog_integration)
+
+        querystring = {
+            'page_size': catalog_integration.page_size,
+            'keys': ",".join(course_keys),
+            'exclude_utm': 1,
+        }
+
+        course_runs = get_edx_api_data(
+            catalog_integration,
+            user,
+            'course_runs',
+            api=api,
+            querystring=querystring,
+        )
+
+    return course_runs
