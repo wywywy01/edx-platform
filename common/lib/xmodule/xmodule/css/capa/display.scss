@@ -906,7 +906,6 @@ div.problem .action {
       @include text-align(right);
       @include float(right);
     }
-
   }
 
   .problem-action-button-wrapper {
@@ -939,6 +938,7 @@ div.problem .action {
     @media (max-width: $bp-screen-lg) {
       max-width: 100%;
       padding-top: $baseline;
+      padding-bottom: $baseline;
     }
     .submit {
       @include margin-right($baseline / 2);
