@@ -1,3 +1,6 @@
+"""
+Mocked Program data for courseware.views.views.program_marketing view.
+"""
 
 PROGRAM_DATA = [{
     "uuid": "bf8dea72-4df3-4a99-b525-915e3f59193a",
