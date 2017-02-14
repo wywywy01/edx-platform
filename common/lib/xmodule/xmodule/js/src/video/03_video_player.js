@@ -2,8 +2,8 @@
 // VideoPlayer module.
     define(
 'video/03_video_player.js',
-['video/02_html5_video.js', 'video/00_resizer.js'],
-function(HTML5Video, Resizer) {
+['video/02_html5_video.js', 'video/02_html5_hls_video.js', 'video/00_resizer.js'],
+function(HTML5Video, HTML5HLSVideo, Resizer) {
     var dfd = $.Deferred(),
         VideoPlayer = function(state) {
             state.videoPlayer = {};
