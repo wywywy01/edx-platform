@@ -736,7 +736,7 @@ def program_marketing(request, program_uuid):
         'authoring_organizations': program_data['authoring_organizations'],
         'min_hours_effort_per_week': program_data['min_hours_effort_per_week'],
         'max_hours_effort_per_week': program_data['max_hours_effort_per_week'],
-        'video_url': program_data.get('video', {}).get('src'),
+        'video_url': (program_data.get('video') or {}).get('src', ''),
         'banner_image': program_data.get('banner_image', {}).get('large', {}).get('url', '')
     }
 
