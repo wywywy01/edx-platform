@@ -22,6 +22,7 @@ from xmodule.modulestore.django import modulestore, ModuleI18nService
 from xmodule.mixin import wrap_with_license
 from opaque_keys.edx.keys import UsageKey
 from opaque_keys.edx.asides import AsideUsageKeyV1, AsideUsageKeyV2
+from opaque_keys.edx.locator import LibraryUsageLocator
 from xmodule.x_module import ModuleSystem
 from xblock.runtime import KvsFieldData
 from xblock.django.request import webob_to_django_response, django_to_webob_request
@@ -135,6 +136,7 @@ class PreviewModuleSystem(ModuleSystem):  # pylint: disable=abstract-method
         """
         Renders a placeholder XBlock.
         """
+        from nose.tools import set_trace;set_trace()
         return self.wrap_xblock(block, view_name, Fragment(), context)
 
     def layout_asides(self, block, context, frag, view_name, aside_frag_fns):
@@ -265,6 +267,12 @@ def _is_xblock_reorderable(xblock, context):
         return False
 
 
+def _is_xblock_movable(xblock):
+    """
+    Returns true if the specified xblock can be moved otherwise returns false.
+    """
+    return not (isinstance(xblock.location, LibraryUsageLocator) or xblock.parent.category == 'library_content')
+
 # pylint: disable=unused-argument
 def _studio_wrap_xblock(xblock, view, frag, context, display_name_only=False):
     """
@@ -285,7 +293,7 @@ def _studio_wrap_xblock(xblock, view, frag, context, display_name_only=False):
             'can_edit': context.get('can_edit', True),
             'can_edit_visibility': context.get('can_edit_visibility', True),
             'can_add': context.get('can_add', True),
-            'can_move': context.get('can_move', True)
+            'can_move': _is_xblock_movable(xblock)
         }
         html = render_to_string('studio_xblock_wrapper.html', template_context)
         frag = wrap_fragment(frag, html)
